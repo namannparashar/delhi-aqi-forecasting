@@ -66,7 +66,7 @@ jobs:
           
           # 2. Add Hugging Face as a remote repository
           # We embed the token into the URL for authentication
-          git remote add space https://naman:$HF_TOKEN@huggingface.co/spaces/naman/delhi-aqi-forecast
+          git remote add space https://naman:$HF_TOKEN@huggingface.co/spaces/namanparashar/delhi-aqi-forecast
           
           # 3. Force push to the Space's main branch
           # We use --force to make the Space match GitHub exactly

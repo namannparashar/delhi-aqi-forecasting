@@ -13,7 +13,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
 
       - name: Authenticate to GCP
@@ -25,7 +25,7 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v4
-        with:
+        with: 
           python-version: '3.12'
 
       - name: Install dependencies
@@ -53,24 +53,12 @@ jobs:
           git -commit -m "Auto-update model and data [skip ci]" || echo "No changes to commit"
           git push 
 
-      # ... (previous steps: checkout, auth, train, commit to github) ...
-
-      - name: Push to Hugging Face Space
+      - name: Sync to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
-          # Replace 'naman' and 'delhi-aqi' with your actual username/space name
-          HF_SPACE_URL: git clone https://huggingface.co/spaces/namanparashar/delhi-aqi-forecast 
-        run: |
-          # 1. Fetch all history so we can push properly
-          git fetch --unshallow || true
-          
-          # 2. Add Hugging Face as a remote repository
-          # We embed the token into the URL for authentication
-          git remote add space https://naman:$HF_TOKEN@huggingface.co/spaces/naman/delhi-aqi-forecast
-          
-          # 3. Force push to the Space's main branch
-          # We use --force to make the Space match GitHub exactly
-          git push --force space main
+          HF_USERNAME: namanparashar  
+          HF_SPACE_NAME: delhi-aqi-forecast 
+        run: python training/sync_to_hf.py 
 
 
           

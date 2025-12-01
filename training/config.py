@@ -23,3 +23,5 @@ class Config:
 
     # API Keys
     RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+
+    

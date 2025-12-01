@@ -21,3 +21,4 @@ requests
 
 # Utilities
 resend 
+huggingface_hub

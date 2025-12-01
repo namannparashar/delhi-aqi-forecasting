@@ -1,0 +1,23 @@
+# Data & ML
+pandas
+numpy
+joblib
+xgboost
+mlforecast
+scikit-learn
+google-cloud-bigquery
+db-dtypes
+python-dotenv
+optuna
+
+# API
+fastapi
+uvicorn[standard]
+
+# Dashboard
+streamlit
+plotly
+requests
+
+# Utilities
+resend 

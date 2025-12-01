@@ -1,15 +1,16 @@
-name: WIF Test
+name: Daily Retrain
 
 on:
+  schedule:
+    - cron: '30 3 * * *'  # Daily at midnight UTC
   workflow_dispatch:
 
-permissions:
-  id-token: write
-  contents: read
-
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  train-and-commit:
+    runs-on: ubuntu-latest 
+    permissions:
+      id-token: write
+      contents: write
 
     steps:
       - name: Checkout repo
@@ -22,8 +23,54 @@ jobs:
           service_account: "github-ci-bq@delhi-weather-app-479422.iam.gserviceaccount.com"
           audience: "https://github.com/namannparashar/delhi-aqi-forecasting"
 
-      - name: gcloud auth list
-        run: gcloud auth list
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
 
-      - name: bq ls
-        run: bq ls --project_id delhi-weather-app-479422
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch Data 
+        run: python training/fetch_data.py
+
+      - name: Train Model
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: python -m training.train
+
+      - name: Commit Files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action" 
+
+          git add models/fcst_model.joblib
+          git add models/X_future.csv 
+          git add models/metrics.json
+          git add data/air_quality_latest.csv
+          git add data/air_quality_current.csv
+
+          git -commit -m "Auto-update model and data [skip ci]" || echo "No changes to commit"
+          git push 
+
+      # ... (previous steps: checkout, auth, train, commit to github) ...
+
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          # Replace 'naman' and 'delhi-aqi' with your actual username/space name
+          HF_SPACE_URL: git clone https://huggingface.co/spaces/namanparashar/delhi-aqi-forecast 
+        run: |
+          # 1. Fetch all history so we can push properly
+          git fetch --unshallow || true
+          
+          # 2. Add Hugging Face as a remote repository
+          # We embed the token into the URL for authentication
+          git remote add space https://naman:$HF_TOKEN@huggingface.co/spaces/naman/delhi-aqi-forecast
+          
+          # 3. Force push to the Space's main branch
+          # We use --force to make the Space match GitHub exactly
+          git push --force space main
+
+
+          

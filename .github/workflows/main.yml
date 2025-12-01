@@ -39,26 +39,54 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: python -m training.train
 
-      - name: Commit Files
+      - name: Commit files
         run: |
+          # 1. Install Git LFS
+          sudo apt-get update
+          sudo apt-get install -y git-lfs
+          git lfs install
+          
+          # 2. Track the model file BEFORE adding it
+          git lfs track "models/*.joblib"
+          git add .gitattributes
+          
+          # 3. Configure Git Identity
           git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action" 
-
+          git config --local user.name "GitHub Action"
+          
+          # 4. Add the files (Now LFS will handle the joblib automatically)
           git add models/fcst_model.joblib
-          git add models/X_future.csv 
+          git add models/X_future.csv
           git add models/metrics.json
           git add data/air_quality_latest.csv
           git add data/air_quality_current.csv
-
-          git -commit -m "Auto-update model and data [skip ci]" || echo "No changes to commit"
-          git push 
+          
+          # 5. Commit and Push to GitHub
+          git commit -m "Auto-update model and data [skip ci]" || echo "No changes to commit"
+          git push
 
       - name: Sync to Hugging Face
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: namanparashar  
           HF_SPACE_NAME: delhi-aqi-forecast 
-        run: python training/sync_to_hf.py 
+        run: python training/sync_to_hf.py
 
+      - name: Push to Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: namanparashar
+          HF_SPACE_NAME: delhi-aqi-forecast
+        run: |
+          # 1. Install LFS (Required to push the large files)
+          sudo apt-get install -y git-lfs
+          git lfs install
+          
+          # 2. Add Remote
+          git remote add space https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/namanparashar/delhi-aqi-forecast
+          
+          # 3. Fetch & Push
+          git fetch --unshallow || true
+          git push --force space main
 
           

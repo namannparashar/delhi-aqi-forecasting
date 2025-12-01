@@ -37,3 +37,6 @@ def check_and_alert(rmse_cv, prev_rmse):
             print(f"Failed to send email: {e}")
     else:
         print("Model performance is stable.")
+
+
+        

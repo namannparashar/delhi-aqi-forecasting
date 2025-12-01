@@ -42,7 +42,7 @@ async def lifespan(app: FastAPI):
 
     print("✅ Model and Data Loaded Successfully")
     yield
-    # Clean up resources if needed (not needed for joblib)
+        # Cleanup on shutdown
     models.clear()
 
 app = FastAPI(title="Delhi PM2.5 Forecast API", lifespan=lifespan)
@@ -79,11 +79,10 @@ def get_forecast():
         out['PM2_5'] = out['PM2_5'].round(0).astype(int)
 
         # Format Actual Data
-        # We process this on the fly to ensure date format consistency
         if not current_data.empty:
-            # Avoid SettingWithCopyWarning by operating on a copy
+            
             actuals_out = current_data.copy()
-            # Ensure column names match expected output
+            
             if 'date' in actuals_out.columns:
                 actuals_out['date'] = pd.to_datetime(actuals_out['date']).dt.strftime('%Y-%m-%d')
             actuals_dict = actuals_out.to_dict(orient='records')

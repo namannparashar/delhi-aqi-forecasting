@@ -67,6 +67,7 @@ try:
         df_actual = pd.DataFrame(actual_data)
         df_actual['date'] = pd.to_datetime(df_actual['date'])
         df_actual['Type'] = 'Actual'
+        df_actual = df_actual.sort_values(by='date')
 
         # --- METRICS ---
         current_val = df_actual['PM2_5'].iloc[-1]
@@ -122,4 +123,4 @@ try:
 
 except Exception as e:
     print(f"DEBUG ERROR: {e}")
-    st.error("Error Loading The Dashboard (Connection Failed)")
+    st.error("Error Loading The Dashboard (Connection Failed)") 

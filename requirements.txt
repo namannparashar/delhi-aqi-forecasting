@@ -22,3 +22,5 @@ requests
 # Utilities
 resend 
 huggingface_hub
+pytest 
+httpx 

@@ -36,6 +36,12 @@ jobs:
       - name: Fetch Data 
         run: python training/fetch_data.py
 
+      - name: Run Pytest Suite
+        run: |
+          export PYTHONPATH=$PYTHONPATH:.
+          
+          pytest -v
+
       - name: Train Model
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}

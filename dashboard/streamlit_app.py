@@ -114,7 +114,7 @@ try:
         
         fig.update_traces(patch={"line": {"dash": "dash"}}, selector={"legendgroup": "Forecast"})
 
-        st.plotly_chart(fig, use_container_width=True, theme=None)
+        st.plotly_chart(fig, width="stretch", theme=None)
 
     else:
         st.error(f"API Error {resp.status_code}")

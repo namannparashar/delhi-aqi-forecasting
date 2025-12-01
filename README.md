@@ -8,4 +8,3 @@ app_port: 7860
 pinned: false
 ---
 
-# 🌦️ Delhi PM2.5 Forecasting Pipeline

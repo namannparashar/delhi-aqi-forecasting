@@ -46,7 +46,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("-- Delhi PM2.5 Forecast Dashboard --")
+st.title("Delhi PM2.5 Forecast Dashboard")
 
 # --- DATA LOADING ---
 API_URL = "http://localhost:8000/forecast"

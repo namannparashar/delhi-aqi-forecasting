@@ -68,14 +68,9 @@ def main():
     # Alert if model degraded
     check_and_alert(rmse_cv, prev_rmse)
 
-    # Update production model logic
-    # (Note: Logic adjusted - only update if error is NOT worse than old error)
-    if prev_rmse is None or Config.FACTOR*rmse_cv <= prev_rmse:
-        print("Model improved or first run. Updating production model.")
-        os.makedirs(os.path.dirname(Config.MODEL_PATH), exist_ok=True)
-        joblib.dump(fcst_final, Config.MODEL_PATH)
-    else:
-        print(f"New model (RMSE {rmse_cv:.3f}) not better than old model ({prev_rmse:.3f}). Keeping old model.")
+    print("Updating the model on full past data and saving...")
+    os.makedirs(os.path.dirname(Config.MODEL_PATH), exist_ok=True)
+    joblib.dump(fcst_final, Config.MODEL_PATH)
     
     # Always save metrics history
     save_metrics(rmse_cv)

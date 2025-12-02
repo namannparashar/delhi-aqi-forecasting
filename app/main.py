@@ -32,7 +32,6 @@ async def lifespan(app: FastAPI):
     df_future['ds'] = pd.to_datetime(df_future['ds']) 
     
     models["X_future"] = df_future
-    models["X_future"] = pd.read_csv(Config.FUTURE_DATA_PATH)
     
     if os.path.exists(Config.CURRENT_DATA_PATH):
         models["current_data"] = pd.read_csv(Config.CURRENT_DATA_PATH)

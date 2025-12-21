@@ -38,7 +38,7 @@ It pulls data from **BigQuery**, trains a **time series machine learning model**
 <!-- This image is a link. Click it to open the App! -->
 [![Delhi AQI Dashboard](assets/dashboard_preview.png)](https://huggingface.co/spaces/namanparashar/delhi-aqi-forecast)
 
-> *Click the image above to interact with the live dashboard.*
+> *Click the link above to interact with the live dashboard.*
 
 ---
 

@@ -9,6 +9,10 @@ future_dates AS (
   FROM max_dt,
   UNNEST(GENERATE_ARRAY(1, 30)) AS day_num
 )
+
+SELECT DISTINCT date, PM2_5, Wind_Speed, Wind_Direction, Humidity, Temperature, Diwali_Flag
+FROM 
+(
 SELECT DATE(timestamp) AS date, ROUND(PM2_5,0) AS PM2_5, Wind_Speed, Wind_Direction, Humidity, Temperature,
 CASE WHEN DATE(timestamp) IN ("2022-10-22","2023-11-10","2024-10-29","2025-10-18") THEN 1 ELSE 0 END AS Diwali_Flag 
 FROM `delhi-weather-app-479422.weather_data.delhi_daily`
@@ -25,4 +29,5 @@ JOIN max_dt mdt
 ON fd.timestamp >= mdt.last_date 
 LEFT JOIN `delhi-weather-app-479422.weather_data.delhi_daily` a 
 ON DATE(a.timestamp) = DATE_SUB(DATE(fd.timestamp), INTERVAL 1 YEAR)
+)
 ORDER BY date;

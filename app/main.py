@@ -63,11 +63,24 @@ def get_forecast():
         raise HTTPException(status_code=500, detail="Model not initialized")
 
     try:
-        # Calculate Horizon based on loaded future data
+        # Use the model's make_future_dataframe to get proper structure
+        # This ensures all required unique_ids and dates are included
         horizon = X_future.shape[0]
-
-        # Generate Predictions
-        preds = fcst_model.predict(h=horizon, X_df=X_future)
+        future_df = fcst_model.make_future_dataframe(horizon)
+        
+        # Merge the exogenous features from X_future with the proper structure
+        # First, ensure X_future has the same columns as expected
+        exog_cols = [c for c in X_future.columns if c not in ['unique_id', 'ds']]
+        
+        # Merge exogenous features onto the future dataframe
+        preds_with_exog = future_df.merge(
+            X_future[['unique_id', 'ds'] + exog_cols],
+            on=['unique_id', 'ds'],
+            how='left'
+        )
+        
+        # Generate Predictions with the properly structured dataframe
+        preds = fcst_model.predict(h=horizon, X_df=preds_with_exog)
 
         # Format Forecast Data
         out = preds[['ds', 'XGBRegressor']].rename(columns={

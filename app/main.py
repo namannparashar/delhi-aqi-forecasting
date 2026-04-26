@@ -66,27 +66,9 @@ def get_forecast():
         # Get horizon from X_future
         horizon = X_future.shape[0]
         
-        # Generate Predictions using the model's make_future_dataframe
-        # to ensure proper structure, then merge exogenous features
-        future_df = fcst_model.make_future_dataframe(horizon)
-        
-        # Get exogenous columns from X_future
-        exog_cols = [c for c in X_future.columns if c not in ['unique_id', 'ds']]
-        
-        # Merge X_future features onto future_df
-        preds_with_exog = future_df.merge(
-            X_future[['unique_id', 'ds'] + exog_cols],
-            on=['unique_id', 'ds'],
-            how='left'
-        )
-        
-        # Fill any missing values with 0 (for numeric columns)
-        for col in exog_cols:
-            if col in preds_with_exog.columns:
-                preds_with_exog[col] = preds_with_exog[col].fillna(0)
-        
-        # Generate Predictions
-        preds = fcst_model.predict(h=horizon, X_df=preds_with_exog)
+        # Generate Predictions WITHOUT X_df first to see if that works
+        # MLForecast can forecast without exogenous variables
+        preds = fcst_model.predict(h=horizon)
 
         # Format Forecast Data
         out = preds[['ds', 'XGBRegressor']].rename(columns={

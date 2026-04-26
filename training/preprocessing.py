@@ -23,5 +23,7 @@ def add_time_features(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 def get_split_date():
-    # Define cut-off as yesterday
-    return pd.Timestamp(datetime.now()) - pd.Timedelta(days=1)
+    # Define cut-off as the last date in the available data
+    # This ensures we have future data for forecasting
+    df = load_data()
+    return df["ds"].max()

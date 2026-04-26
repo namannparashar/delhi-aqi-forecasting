@@ -1,3 +1,5 @@
+[Deprecated; Not Live]
+
 ---
 title: Delhi AQI Forecast
 emoji: 🌦️
